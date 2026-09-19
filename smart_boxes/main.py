@@ -1,59 +1,40 @@
 import os
+import sys
+
+# 1. CHỈ ĐƯỜNG: Thêm thư mục hiện tại (smart_boxes) vào danh sách tìm kiếm của Python
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-import sys
 
-# Đảm bảo Python tìm thấy các module trong thư mục smart_boxes
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# 2. Bây giờ Python đã biết đường, nó sẽ tìm thấy file assembly.py
+from assembly import LISHomeAssembly
 
-from SBBox_LIS_Hero.box import LISHeroBox
+app = FastAPI(title="LIS - SBBS Architecture", version="1.0")
 
-app = FastAPI(
-    title="LIS - Learning Intelligence Infrastructure",
-    description="Hạ tầng trí tuệ cho Đại học AI-Native",
-    version="1.0"
-)
-
-# --- PHẦN SỬA LỖI STATIC ---
-# Lấy đường dẫn tuyệt đối đến thư mục chứa file main.py
+# Mount static files
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
-
-# Tự động tạo thư mục static nếu chưa có (để không bị lỗi nữa)
-if not os.path.exists(STATIC_DIR):
+if not os.path.exists(STATIC_DIR): 
     os.makedirs(STATIC_DIR)
-
-# Mount thư mục static
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-# ----------------------------
 
-# Khởi tạo Smart Box
-hero_box = LISHeroBox()
+# Khởi tạo Assembly (Bộ điều phối)
+home_assembly = LISHomeAssembly()
 
 @app.get("/", response_class=HTMLResponse)
 def read_root():
-    """
-    Trang chủ sử dụng SBBox-LIS-Hero
-    """
-    hero_html = hero_box.render({
-        "slogan": "KIẾN TẠO - CHUẨN MỰC",
-        "subtitle": "Learning Intelligence Infrastructure",
-        "description": "Hạ tầng trí tuệ cho Đại học AI-Native",
-        "cta_text": "KHÁM PHÁ LIS",
-        "cta_link": "/about"
-    })
-    
-    return hero_html
+    # Assembly tự động lắp ráp và trả về giao diện hoàn chỉnh
+    return home_assembly.render()
 
 @app.get("/api/health")
 def health_check():
-    """
-    API health check
-    """
     return {
         "system": "LIS",
-        "slogan": "KIẾN TẠO - CHUẨN MỰC",
-        "status": "running",
-        "smart_boxes": ["SBBox-LIS-Hero-001"]
+        "architecture": "SBBS",
+        "assembled_boxes": list(home_assembly.boxes.keys()),
+        "status": "running"
     }
