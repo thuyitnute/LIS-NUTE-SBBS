@@ -1,0 +1,7 @@
+   Hạ tầng Niềm tin và AI Agent
+   
+   Khái niệm về hạ tầng niềm tin là nền tảng mật mã và chữ ký số xác thực danh tính AI Agent.
+   
+   Nguyên lý cơ bản: Mỗi AI Agent phải có định danh rõ ràng và hạn mức cấp quyền cụ thể.
+   
+   Ví dụ minh chứng: Trong hệ thống LIS, AI Tutor chỉ được quyền gợi ý, không được tự ý sửa điểm sinh viên.

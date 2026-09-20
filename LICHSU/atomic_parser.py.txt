@@ -1,0 +1,51 @@
+import re, uuid
+from typing import List, Dict, Tuple
+
+class RuleBasedAtomicParser:
+    def __init__(self):
+        self.rules = {
+            'concept': [r'\b(khái niệm|định nghĩa|là gì|được hiểu là|concept|definition)\b'],
+            'principle': [r'\b(nguyên lý|nguyên tắc|quy tắc|luật|principle|rule)\b'],
+            'evidence': [r'\b(ví dụ|minh chứng|thực tế|case study|example)\b'],
+            'reasoning': [r'\b(bởi vì|lý do là|do đó|vì vậy|because|therefore)\b'],
+            'contradiction': [r'\b(tuy nhiên|mâu thuẫn|ngược lại|nhưng|however|but)\b'],
+            'socratic': [r'\?$', r'\b(tại sao|làm thế nào|điều gì xảy ra nếu|what if|how|why)\b']
+        }
+
+    def parse_text(self, text: str, source_title: str = "") -> Tuple[List[Dict], List[Dict]]:
+        sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+|\n+', text) if s.strip() and len(s.strip()) > 15]
+        atoms, relations = [], []
+        current_concept_id = None
+        
+        for sent in sentences:
+            atom_type = self._classify_sentence(sent)
+            atom_id = f"ATOM-{uuid.uuid4().hex[:8].upper()}"
+            title = sent[:60] + "..." if len(sent) > 60 else sent
+            
+            atom = {
+                'atom_id': atom_id, 'title': title, 'content': sent.strip(), 'atom_type': atom_type,
+                'concepts': [sent] if atom_type == 'concept' else [],
+                'principles': [sent] if atom_type == 'principle' else [],
+                'evidence': [sent] if atom_type == 'evidence' else [],
+                'reasoning': [sent] if atom_type == 'reasoning' else [],
+                'contradictions': [sent] if atom_type == 'contradiction' else [],
+                'socratic_questions': [sent] if atom_type == 'socratic' else [],
+                'context': source_title, 'source': source_title, 'author': 'Structured Parser v2.0',
+                'metadata': {'extraction_method': 'rule-based-structured'}
+            }
+            atoms.append(atom)
+            
+            if atom_type == 'concept': current_concept_id = atom_id
+            elif current_concept_id:
+                rel_type = 'supports'
+                if atom_type == 'contradiction': rel_type = 'challenges'
+                elif atom_type == 'principle': rel_type = 'governs'
+                elif atom_type == 'evidence': rel_type = 'proves'
+                relations.append({'from_atom_id': atom_id, 'to_atom_id': current_concept_id, 'relation_type': rel_type})
+        return atoms, relations
+
+    def _classify_sentence(self, sentence: str) -> str:
+        text_lower = sentence.lower()
+        for atom_type, patterns in self.rules.items():
+            if any(re.search(pattern, text_lower) for pattern in patterns): return atom_type
+        return 'general'

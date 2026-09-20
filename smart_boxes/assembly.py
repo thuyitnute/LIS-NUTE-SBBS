@@ -6,7 +6,9 @@ if current_dir not in sys.path: sys.path.append(current_dir)
 
 from SBBox_LIS_Hero.box import LISHeroBox
 from SBBox_Intelligence_Core.box import IntelligenceCoreBox
-from SBBox_AI_Chat_Widget.box import AIChatWidgetBox # <-- Import Box mới
+from SBBox_AI_Chat_Widget.box import AIChatWidgetBox
+from SBBox_Living_Book.box import LivingBookBox
+from SBBox_Atom_Manager.box import AtomManagerBox  # <-- Import box mới
 from smart_wire import ConfigWire
 
 class LISHomeAssembly:
@@ -14,7 +16,9 @@ class LISHomeAssembly:
         self.boxes = {
             "hero": LISHeroBox(),
             "core": IntelligenceCoreBox(),
-            "chat_widget": AIChatWidgetBox() # <-- Đăng ký Box mới
+            "living_book": LivingBookBox(),
+            "atom_manager": AtomManagerBox(),  # <-- Thêm box mới
+            "chat_widget": AIChatWidgetBox()
         }
         
         self.data_wire = ConfigWire("context.json")
@@ -29,16 +33,18 @@ class LISHomeAssembly:
                 "cta_link": "/#core"
             },
             "core": dynamic_context,
-            "chat_widget": {} # Widget này hiện không cần config động
+            "living_book": {},
+            "atom_manager": {},
+            "chat_widget": {}
         }
 
     def render(self) -> str:
-        # Render từng Box
         hero_html = self.boxes["hero"].render(self.configurations["hero"])
         core_html = self.boxes["core"].render(self.configurations["core"])
-        chat_html = self.boxes["chat_widget"].render(self.configurations["chat_widget"]) # <-- Render Box mới
+        living_book_html = self.boxes["living_book"].render(self.configurations["living_book"])
+        atom_manager_html = self.boxes["atom_manager"].render(self.configurations["atom_manager"])
+        chat_html = self.boxes["chat_widget"].render(self.configurations["chat_widget"])
         
-        # Lắp ráp vào khung xương
         return f"""
         <!DOCTYPE html>
         <html lang="vi">
@@ -50,7 +56,9 @@ class LISHomeAssembly:
         <body style="margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background: #050b14;">
             {hero_html}
             {core_html}
-            {chat_html} <!-- Widget lơ lửng trên toàn bộ giao diện -->
+            {living_book_html}
+            {atom_manager_html}
+            {chat_html}
         </body>
         </html>
         """

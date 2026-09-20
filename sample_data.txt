@@ -1,0 +1,17 @@
+Khái niệm về Hạ tầng Niềm tin (Trust Infrastructure) là hệ thống các giao thức mật mã và chữ ký số giúp xác thực danh tính của các thực thể trong môi trường số.
+
+Nguyên tắc cốt lõi của hệ thống này là "Zero Trust" - Không tin tưởng mặc định. Mọi yêu cầu truy cập đều phải được xác minh liên tục.
+
+Ví dụ minh chứng: Trong hệ thống LIS, khi một AI Agent muốn truy cập vào điểm số của sinh viên, nó phải gửi kèm chữ ký số từ Giảng viên phụ trách.
+
+Tuy nhiên, việc áp dụng Zero Trust có thể làm giảm tốc độ xử lý của hệ thống do phải xác minh quá nhiều lớp.
+
+Vậy làm thế nào để cân bằng giữa bảo mật và hiệu suất trong môi trường AI-Native?
+
+Nguyên lý mật mã khóa công khai (Public Key Cryptography) cho phép hai bên giao tiếp an toàn mà không cần chia sẻ khóa bí mật trước.
+
+Ví dụ: Thuật toán RSA sử dụng một cặp khóa - khóa công khai để mã hóa và khóa riêng tư để giải mã.
+
+Bởi vì mỗi bên chỉ giữ khóa riêng của mình, nên即使 khóa công khai bị lộ, thông tin vẫn an toàn.
+
+Tuy nhiên, mật mã khóa công khai đòi hỏi tài nguyên tính toán lớn hơn nhiều so với mật mã đối xứng.
