@@ -2,7 +2,5 @@ fastapi
 uvicorn
 python-multipart
 requests
-openai
 PyPDF2
 python-docx
-pydantic>=2.5.0
